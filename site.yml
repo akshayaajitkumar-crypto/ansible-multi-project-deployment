@@ -1,0 +1,7 @@
+---
+- name: Deploy multiple web projects
+  hosts: webservers
+  become: yes
+
+  roles:
+    - webapp

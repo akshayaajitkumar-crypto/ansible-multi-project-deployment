@@ -1,0 +1,16 @@
+
+---
+application_name: company_webapps
+
+projects:
+  - name: project_a
+    port: 8083
+    message: "Welcome to Project A"
+
+  - name: project_b
+    port: 8084
+    message: "Welcome to Project B"
+
+  - name: project_c
+    port: 8085
+    message: "Welcome to Project C"

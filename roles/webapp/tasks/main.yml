@@ -1,0 +1,47 @@
+---
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Create project directories
+  file:
+    path: "/var/www/{{ item.name }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+  loop: "{{ projects }}"
+
+- name: Deploy project homepages
+  template:
+    src: index.html.j2
+    dest: "/var/www/{{ item.name }}/index.html"
+    owner: www-data
+    group: www-data
+    mode: '0644'
+  loop: "{{ projects }}"
+  notify: Restart Nginx
+
+- name: Deploy Nginx configurations
+  template:
+    src: project.conf.j2
+    dest: "/etc/nginx/sites-available/{{ item.name }}.conf"
+    mode: '0644'
+  loop: "{{ projects }}"
+  notify: Restart Nginx
+
+- name: Enable project configurations
+  file:
+    src: "/etc/nginx/sites-available/{{ item.name }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ item.name }}.conf"
+    state: link
+  loop: "{{ projects }}"
+  notify: Restart Nginx
+
+- name: Ensure Nginx is running
+  service:
+    name: nginx
+    state: started
+    enabled: yes
